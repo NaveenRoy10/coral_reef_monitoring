@@ -1,0 +1,263 @@
+<!-- templates/landing.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoralGuard - Protect Our Coral Reefs</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="landing-body">
+    <!-- Landing Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark glass-nav fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="fas fa-shield-alt me-2"></i>CoralGuard
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#landingNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="landingNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#diseases">Diseases</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                </ul>
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-sm px-3">Login</a>
+                    <a href="{{ url_for('register') }}" class="btn btn-glow btn-sm px-3">Get Started</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-particles" id="particles"></div>
+        <div class="container position-relative">
+            <div class="row align-items-center min-vh-100">
+                <div class="col-lg-7">
+                    <div class="hero-content">
+                        <span class="badge bg-info bg-opacity-25 text-info px-3 py-2 mb-3 rounded-pill">
+                            <i class="fas fa-satellite-dish me-1"></i> AI-Powered Detection
+                        </span>
+                        <h1 class="hero-title">
+                            Protecting Our<br>
+                            <span class="gradient-text">Coral Reefs</span><br>
+                            With AI Technology
+                        </h1>
+                        <p class="hero-subtitle">
+                            Advanced YOLOv8 deep learning models to detect coral diseases
+                            and count fish populations. Help preserve marine ecosystems
+                            with cutting-edge computer vision technology.
+                        </p>
+                        <div class="d-flex gap-3 mt-4">
+                            <a href="{{ url_for('register') }}" class="btn btn-glow btn-lg px-4">
+                                <i class="fas fa-rocket me-2"></i>Start Detecting
+                            </a>
+                            <a href="#features" class="btn btn-outline-light btn-lg px-4">
+                                <i class="fas fa-play me-2"></i>Learn More
+                            </a>
+                        </div>
+                        <div class="hero-stats mt-5">
+                            <div class="stat-item">
+                                <h3>5</h3>
+                                <p>Disease Classes</p>
+                            </div>
+                            <div class="stat-item">
+                                <h3>AI</h3>
+                                <p>YOLOv8 Model</p>
+                            </div>
+                            <div class="stat-item">
+                                <h3>Real-time</h3>
+                                <p>Detection</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5 d-none d-lg-block">
+                    <div class="hero-image-container">
+                        <div class="floating-card card-1">
+                            <i class="fas fa-microscope"></i>
+                            <span>Disease Detection</span>
+                        </div>
+                        <div class="floating-card card-2">
+                            <i class="fas fa-fish"></i>
+                            <span>Fish Counting</span>
+                        </div>
+                        <div class="floating-card card-3">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Analytics</span>
+                        </div>
+                        <div class="coral-illustration">
+                            🪸
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="wave-divider">
+            <svg viewBox="0 0 1440 120" fill="none">
+                <path d="M0,64 C360,120 720,0 1080,64 C1260,96 1380,80 1440,64 L1440,120 L0,120 Z" fill="rgba(10,15,30,1)"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="badge bg-primary bg-opacity-25 text-primary px-3 py-2 mb-3 rounded-pill">Features</span>
+                <h2 class="section-title">What CoralGuard Offers</h2>
+                <p class="section-subtitle">Comprehensive tools for marine ecosystem monitoring</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon coral-icon">
+                            <i class="fas fa-microscope"></i>
+                        </div>
+                        <h4>Coral Disease Detection</h4>
+                        <p>Identify 5 types of coral conditions including Band Disease, Bleaching, White Pox, Dead Coral, and Healthy Coral using AI.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon fish-icon">
+                            <i class="fas fa-fish"></i>
+                        </div>
+                        <h4>Fish Population Counting</h4>
+                        <p>Automatically detect and count fish in underwater images to monitor marine biodiversity and population trends.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon history-icon">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <h4>Detection History</h4>
+                        <p>Track all your detections over time with detailed records, images, and analysis results for research purposes.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Diseases Section -->
+    <section id="diseases" class="diseases-section py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="badge bg-danger bg-opacity-25 text-danger px-3 py-2 mb-3 rounded-pill">Diseases</span>
+                <h2 class="section-title">Coral Diseases We Detect</h2>
+                <p class="section-subtitle">Our AI model can identify these coral conditions</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4 col-lg">
+                    <div class="disease-card" style="border-top: 4px solid #e74c3c;">
+                        <div class="disease-emoji">🔴</div>
+                        <h5>Band Disease</h5>
+                        <span class="badge bg-danger">High Severity</span>
+                        <p class="mt-2 small">Characterized by a distinct band of tissue loss progressing across the colony.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg">
+                    <div class="disease-card" style="border-top: 4px solid #f39c12;">
+                        <div class="disease-emoji">⚪</div>
+                        <h5>Bleached Disease</h5>
+                        <span class="badge bg-warning text-dark">Critical</span>
+                        <p class="mt-2 small">Coral expels symbiotic algae due to stress, turning white.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 col-lg">
+                    <div class="disease-card" style="border-top: 4px solid #7f8c8d;">
+                        <div class="disease-emoji">💀</div>
+                        <h5>Dead Coral</h5>
+                        <span class="badge bg-secondary">Terminal</span>
+                        <p class="mt-2 small">Complete loss of living tissue, only skeleton remains.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg">
+                    <div class="disease-card" style="border-top: 4px solid #27ae60;">
+                        <div class="disease-emoji">✅</div>
+                        <h5>Healthy Coral</h5>
+                        <span class="badge bg-success">Healthy</span>
+                        <p class="mt-2 small">Vibrant coloration with active polyp extension and normal growth.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg">
+                    <div class="disease-card" style="border-top: 4px solid #9b59b6;">
+                        <div class="disease-emoji">🟣</div>
+                        <h5>White Pox</h5>
+                        <span class="badge bg-purple">High Severity</span>
+                        <p class="mt-2 small">Irregular white patches caused by Serratia marcescens bacteria.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <span class="badge bg-info bg-opacity-25 text-info px-3 py-2 mb-3 rounded-pill">About</span>
+                    <h2 class="section-title">Why Coral Reef Monitoring Matters</h2>
+                    <p class="text-light-muted">
+                        Coral reefs are among the most biodiverse ecosystems on Earth, supporting
+                        over 25% of all marine species. However, they face unprecedented threats
+                        from climate change, pollution, and disease.
+                    </p>
+                    <p class="text-light-muted">
+                        CoralGuard uses state-of-the-art YOLOv8 deep learning models to provide
+                        rapid, accurate detection of coral diseases and fish population counts,
+                        empowering researchers and conservationists with actionable data.
+                    </p>
+                    <div class="row mt-4">
+                        <div class="col-6">
+                            <div class="about-stat">
+                                <i class="fas fa-brain text-primary mb-2"></i>
+                                <h5>Deep Learning</h5>
+                                <p class="small text-white">YOLOv8 Architecture</p>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="about-stat">
+                                <i class="fas fa-bolt text-warning mb-2"></i>
+                                <h5>Real-time</h5>
+                                <p class="small text-white">Instant Results</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <div class="about-illustration">
+                        <div class="ocean-scene">
+                            <div class="bubble b1"></div>
+                            <div class="bubble b2"></div>
+                            <div class="bubble b3"></div>
+                            <div class="ocean-emoji">🌊🐠🪸🐡🐟</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-section py-4">
+        <div class="container text-center">
+            <p class="mb-0 text-white">
+                &copy; 2026 CoralGuard. Built with <i class="fas fa-heart text-danger"></i> for Ocean Conservation.
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

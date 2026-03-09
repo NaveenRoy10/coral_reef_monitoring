@@ -1,0 +1,126 @@
+<!-- templates/history.html -->
+{% extends 'base.html' %}
+{% block title %}Detection History - CoralGuard{% endblock %}
+
+{% block content %}
+<div class="history-wrapper">
+    <div class="container py-5 mt-5">
+        <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+            <div>
+                <h2 class="text-white mb-1">
+                    <i class="fas fa-history me-2"></i>Detection History
+                </h2>
+                <p class="text-muted mb-0">View all your past detections</p>
+            </div>
+            <div class="d-flex gap-2 mt-2 mt-md-0">
+                <a href="{{ url_for('history', type='all') }}"
+                   class="btn btn-sm {{ 'btn-primary' if filter_type == 'all' else 'btn-outline-light' }}">
+                    All
+                </a>
+                <a href="{{ url_for('history', type='coral') }}"
+                   class="btn btn-sm {{ 'btn-danger' if filter_type == 'coral' else 'btn-outline-light' }}">
+                    <i class="fas fa-microscope me-1"></i>Coral
+                </a>
+                <a href="{{ url_for('history', type='fish') }}"
+                   class="btn btn-sm {{ 'btn-info' if filter_type == 'fish' else 'btn-outline-light' }}">
+                    <i class="fas fa-fish me-1"></i>Fish
+                </a>
+            </div>
+        </div>
+
+        {% if detections.items %}
+        <div class="row g-4">
+            {% for det in detections.items %}
+            <div class="col-md-6 col-lg-4">
+                <div class="history-card glass-card overflow-hidden">
+                    <div class="history-image-wrapper">
+                        <img src="{{ url_for('static', filename='results/' + det.result_image) }}"
+                             class="history-image" alt="Detection">
+                        <span class="history-type-badge {{ 'bg-danger' if det.detection_type == 'coral' else 'bg-info' }}">
+                            <i class="fas {{ 'fa-microscope' if det.detection_type == 'coral' else 'fa-fish' }} me-1"></i>
+                            {{ det.detection_type|capitalize }}
+                        </span>
+                    </div>
+                    <div class="p-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-white fw-semibold">
+                                {{ det.total_detections }} {{ 'condition(s)' if det.detection_type == 'coral' else 'fish' }} detected
+                            </span>
+                            <span class="badge bg-{{ 'success' if det.confidence_avg > 70 else 'warning' if det.confidence_avg > 40 else 'danger' }}">
+                                {{ det.confidence_avg }}%
+                            </span>
+                        </div>
+                        <p class="text-muted small mb-3">
+                            <i class="fas fa-calendar me-1"></i>
+                            {{ det.created_at.strftime('%Y-%m-%d %H:%M') }}
+                        </p>
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('view_detection', detection_id=det.id) }}"
+                               class="btn btn-outline-primary btn-sm flex-grow-1">
+                                <i class="fas fa-eye me-1"></i>View
+                            </a>
+                            <form action="{{ url_for('delete_detection', detection_id=det.id) }}"
+                                  method="POST" class="d-inline"
+                                  onsubmit="return confirm('Delete this detection?');">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if detections.pages > 1 %}
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if detections.has_prev %}
+                <li class="page-item">
+                    <a class="page-link glass-page" href="{{ url_for('history', page=detections.prev_num, type=filter_type) }}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+                {% for page_num in detections.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                {% if page_num %}
+                <li class="page-item {{ 'active' if page_num == detections.page }}">
+                    <a class="page-link glass-page" href="{{ url_for('history', page=page_num, type=filter_type) }}">
+                        {{ page_num }}
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled"><span class="page-link glass-page">...</span></li>
+                {% endif %}
+                {% endfor %}
+                {% if detections.has_next %}
+                <li class="page-item">
+                    <a class="page-link glass-page" href="{{ url_for('history', page=detections.next_num, type=filter_type) }}">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+        {% else %}
+        <div class="glass-card p-5 text-center">
+            <i class="fas fa-folder-open fa-4x text-muted mb-3"></i>
+            <h4 class="text-white">No Detections Found</h4>
+            <p class="text-muted">Start by detecting coral diseases or counting fish!</p>
+            <div class="d-flex gap-3 justify-content-center">
+                <a href="{{ url_for('detect_coral') }}" class="btn btn-glow">
+                    <i class="fas fa-microscope me-2"></i>Detect Coral
+                </a>
+                <a href="{{ url_for('detect_fish') }}" class="btn btn-ocean">
+                    <i class="fas fa-fish me-2"></i>Count Fish
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

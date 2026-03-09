@@ -1,0 +1,169 @@
+<!-- templates/dashboard.html -->
+{% extends 'base.html' %}
+{% block title %}Dashboard - CoralGuard{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+    <div class="container py-5 mt-5">
+        <!-- Welcome Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="welcome-banner glass-card p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="text-white mb-1">
+                                <i class="fas fa-water me-2"></i>Welcome, {{ current_user.full_name }}!
+                            </h2>
+                            <p class="text-light-muted mb-0">
+                                Monitor coral health and marine life with AI-powered detection
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <span class="badge bg-info bg-opacity-25 text-info px-3 py-2">
+                                <i class="fas fa-calendar me-1"></i>
+                                {{ current_user.created_at.strftime('%B %Y') }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="stat-card glass-card p-4 text-center">
+                    <div class="stat-icon bg-primary bg-opacity-25">
+                        <i class="fas fa-search text-primary"></i>
+                    </div>
+                    <h3 class="text-white mt-3 mb-1">{{ total_detections }}</h3>
+                    <p class="text-light-muted mb-0">Total Detections</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card glass-card p-4 text-center">
+                    <div class="stat-icon bg-danger bg-opacity-25">
+                        <i class="fas fa-microscope text-danger"></i>
+                    </div>
+                    <h3 class="text-white mt-3 mb-1">{{ coral_detections }}</h3>
+                    <p class="text-light-muted mb-0">Coral Scans</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card glass-card p-4 text-center">
+                    <div class="stat-icon bg-success bg-opacity-25">
+                        <i class="fas fa-fish text-success"></i>
+                    </div>
+                    <h3 class="text-white mt-3 mb-1">{{ fish_detections }}</h3>
+                    <p class="text-light-muted mb-0">Fish Counts</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="action-card glass-card p-4 h-100">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="action-icon-lg bg-coral">
+                            <i class="fas fa-microscope"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h4 class="text-white mb-1">Coral Disease Detection</h4>
+                            <p class="text-light-muted mb-0">Analyze coral images for diseases</p>
+                        </div>
+                    </div>
+                    <p class="text-light-muted small">
+                        Upload underwater coral images to detect Band Disease, Bleaching,
+                        White Pox Disease, Dead Coral, or confirm Healthy Coral status.
+                    </p>
+                    <a href="{{ url_for('detect_coral') }}" class="btn btn-glow w-100 mt-2">
+                        <i class="fas fa-upload me-2"></i>Start Coral Detection
+                    </a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="action-card glass-card p-4 h-100">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="action-icon-lg bg-ocean">
+                            <i class="fas fa-fish"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h4 class="text-white mb-1">Fish Population Counter</h4>
+                            <p class="text-light-muted mb-0">Count fish in underwater images</p>
+                        </div>
+                    </div>
+                    <p class="text-light-muted small">
+                        Upload images of underwater scenes to automatically detect
+                        and count the number of fish present for biodiversity monitoring.
+                    </p>
+                    <a href="{{ url_for('detect_fish') }}" class="btn btn-ocean w-100 mt-2">
+                        <i class="fas fa-upload me-2"></i>Start Fish Counting
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Detections -->
+        <div class="row">
+            <div class="col-12">
+                <div class="glass-card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="text-white mb-0">
+                            <i class="fas fa-clock me-2"></i>Recent Detections
+                        </h4>
+                        <a href="{{ url_for('history') }}" class="btn btn-outline-light btn-sm">
+                            View All <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                    {% if recent_detections %}
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover table-borderless">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Detections</th>
+                                    <th>Confidence</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for det in recent_detections %}
+                                <tr>
+                                    <td>
+                                        <span class="badge {{ 'bg-danger' if det.detection_type == 'coral' else 'bg-info' }}">
+                                            <i class="fas {{ 'fa-microscope' if det.detection_type == 'coral' else 'fa-fish' }} me-1"></i>
+                                            {{ det.detection_type|capitalize }}
+                                        </span>
+                                    </td>
+                                    <td class="text-white">{{ det.total_detections }}</td>
+                                    <td>
+                                        <span class="text-{{ 'success' if det.confidence_avg > 70 else 'warning' if det.confidence_avg > 40 else 'danger' }}">
+                                            {{ det.confidence_avg }}%
+                                        </span>
+                                    </td>
+                                    <td class="text-muted">{{ det.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>
+                                        <a href="{{ url_for('view_detection', detection_id=det.id) }}"
+                                           class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No detections yet. Start by uploading an image!</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

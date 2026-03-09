@@ -1,0 +1,68 @@
+<!-- templates/fish_detect.html -->
+{% extends 'base.html' %}
+{% block title %}Fish Counting - CoralGuard{% endblock %}
+
+{% block content %}
+<div class="detection-wrapper">
+    <div class="container py-5 mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="glass-card p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <div class="detection-header-icon bg-ocean mx-auto">
+                            <i class="fas fa-fish"></i>
+                        </div>
+                        <h2 class="text-white mt-3">Fish Population Counter</h2>
+                        <p class="text-light-muted">
+                            Upload an underwater image to detect and count fish
+                        </p>
+                    </div>
+
+                    <div class="info-box mb-4">
+                        <i class="fas fa-info-circle text-info me-2"></i>
+                        <span class="text-light-muted">
+                            Our AI model will detect all visible fish in the image
+                            and provide an accurate count along with confidence scores.
+                        </span>
+                    </div>
+
+                    <!-- Upload Form -->
+                    <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                        <div class="upload-zone" id="uploadZone">
+                            <input type="file" name="image" id="imageInput"
+                                   accept=".jpg,.jpeg,.png,.webp,.bmp" required hidden>
+                            <div class="upload-content" id="uploadContent">
+                                <i class="fas fa-cloud-upload-alt fa-3x text-info mb-3"></i>
+                                <h5 class="text-white">Drag & Drop or Click to Upload</h5>
+                                <p class="text-muted small">Supports JPG, PNG, WEBP (Max 16MB)</p>
+                            </div>
+                            <div class="preview-container" id="previewContainer" style="display:none;">
+                                <img id="previewImage" class="preview-image" alt="Preview">
+                                <button type="button" class="btn btn-sm btn-danger remove-preview" id="removePreview">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-ocean w-100 py-3 mt-3" id="detectBtn">
+                            <i class="fas fa-fish me-2"></i>Count Fish
+                            <span class="spinner-border spinner-border-sm ms-2 d-none" id="loadingSpinner"></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    setupUploadZone('uploadZone', 'imageInput', 'previewContainer', 'previewImage', 'uploadContent', 'removePreview');
+
+    document.getElementById('uploadForm').addEventListener('submit', function() {
+        const btn = document.getElementById('detectBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-cog fa-spin me-2"></i>Counting Fish... <span class="spinner-border spinner-border-sm ms-2"></span>';
+    });
+</script>
+{% endblock %}

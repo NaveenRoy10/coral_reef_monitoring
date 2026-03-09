@@ -1,0 +1,204 @@
+<!-- templates/result.html -->
+{% extends 'base.html' %}
+{% block title %}Detection Results - CoralGuard{% endblock %}
+
+{% block content %}
+<div class="result-wrapper">
+    <div class="container py-5 mt-5">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <div>
+                        <h2 class="text-white mb-1">
+                            <i class="fas {{ 'fa-microscope' if detection_type == 'coral' else 'fa-fish' }} me-2"></i>
+                            {{ 'Coral Disease' if detection_type == 'coral' else 'Fish Count' }} Results
+                        </h2>
+                        <p class="text-muted mb-0">
+                            Detected {{ detection.total_detections }} {{ 'condition(s)' if detection_type == 'coral' else 'fish' }}
+                            | {{ detection.created_at.strftime('%Y-%m-%d %H:%M') }}
+                        </p>
+                    </div>
+                    <div class="d-flex gap-2 mt-2 mt-md-0">
+                        <a href="{{ url_for('detect_coral' if detection_type == 'coral' else 'detect_fish') }}"
+                           class="btn btn-outline-light btn-sm">
+                            <i class="fas fa-plus me-1"></i>New Detection
+                        </a>
+                        <a href="{{ url_for('history') }}" class="btn btn-outline-info btn-sm">
+                            <i class="fas fa-history me-1"></i>History
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Result Image -->
+            <div class="col-lg-7">
+                <div class="glass-card p-3">
+                    <h5 class="text-white mb-3">
+                        <i class="fas fa-image me-2"></i>Detection Result
+                    </h5>
+                    <div class="result-image-container">
+                        <img src="{{ url_for('static', filename='results/' + detection.result_image) }}"
+                             class="result-image" alt="Detection Result">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detection Summary -->
+            <div class="col-lg-5">
+                <!-- Stats -->
+                <div class="glass-card p-3 mb-3">
+                    <h5 class="text-white mb-3">
+                        <i class="fas fa-chart-bar me-2"></i>Summary
+                    </h5>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <div class="mini-stat">
+                                <span class="mini-stat-value text-primary">{{ detection.total_detections }}</span>
+                                <span class="mini-stat-label">Total Detected</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mini-stat">
+                                <span class="mini-stat-value text-success">{{ detection.confidence_avg }}%</span>
+                                <span class="mini-stat-label">Avg Confidence</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if detection_type == 'fish' %}
+                    <div class="fish-count-display mt-3">
+                        <div class="fish-count-box">
+                            <i class="fas fa-fish fa-2x text-info mb-2"></i>
+                            <h2 class="text-white mb-0">{{ fish_count }}</h2>
+                            <p class="text-muted mb-0">Fish Counted</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Detections List -->
+                <div class="glass-card p-3">
+                    <h5 class="text-white mb-3">
+                        <i class="fas fa-list me-2"></i>Detections
+                    </h5>
+                    {% if detections %}
+                    <div class="detections-list">
+                        {% for det in detections %}
+                        <div class="detection-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    {% if detection_type == 'coral' %}
+                                    <span class="detection-dot" style="background: {{ det.info.color if det.info else '#3498db' }};"></span>
+                                    <span class="text-white fw-semibold">{{ det['class'] }}</span>
+                                    {% else %}
+                                    <span class="detection-dot" style="background: #00bcd4;"></span>
+                                    <span class="text-white fw-semibold">Fish #{{ det.fish_number }}</span>
+                                    {% endif %}
+                                </div>
+                                <span class="badge bg-{{ 'success' if det.confidence > 70 else 'warning' if det.confidence > 40 else 'danger' }}">
+                                    {{ det.confidence }}%
+                                </span>
+                            </div>
+
+                            {% if detection_type == 'coral' and det['class'] in disease_info %}
+                            <div class="disease-detail mt-2">
+                                <p class="small text-light-muted mb-1">
+                                    {{ disease_info[det['class']].description[:150] }}...
+                                </p>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <span class="badge bg-{{ 'danger' if disease_info[det['class']].severity == 'Critical' or disease_info[det['class']].severity == 'Terminal' else 'warning' if disease_info[det['class']].severity == 'High' else 'success' }} bg-opacity-25">
+                                        Severity: {{ disease_info[det['class']].severity }}
+                                    </span>
+                                </div>
+                                <button class="btn btn-outline-info btn-sm mt-2 w-100"
+                                        data-bs-toggle="modal" data-bs-target="#diseaseModal{{ loop.index }}">
+                                    <i class="fas fa-info-circle me-1"></i>View Details
+                                </button>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                        <p class="text-muted">No detections found in this image.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Original vs Result Comparison -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="glass-card p-3">
+                    <h5 class="text-white mb-3">
+                        <i class="fas fa-columns me-2"></i>Original vs Result
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <p class="text-muted text-center mb-2">Original Image</p>
+                            <img src="{{ url_for('static', filename='uploads/' + detection.original_image) }}"
+                                 class="comparison-image" alt="Original">
+                        </div>
+                        <div class="col-md-6">
+                            <p class="text-muted text-center mb-2">Detected Result</p>
+                            <img src="{{ url_for('static', filename='results/' + detection.result_image) }}"
+                                 class="comparison-image" alt="Result">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Disease Detail Modals -->
+{% if detection_type == 'coral' %}
+{% for det in detections %}
+{% if det['class'] in disease_info %}
+<div class="modal fade" id="diseaseModal{{ loop.index }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-modal">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-white">
+                    {{ disease_info[det['class']].icon }} {{ det['class'] }}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <h6 class="text-primary">Description</h6>
+                    <p class="text-light-muted">{{ disease_info[det['class']].description }}</p>
+                </div>
+                <div class="mb-3">
+                    <h6 class="text-warning">Severity Level</h6>
+                    <span class="badge bg-{{ 'danger' if disease_info[det['class']].severity in ['Critical', 'Terminal'] else 'warning' if disease_info[det['class']].severity == 'High' else 'success' }} px-3 py-2">
+                        {{ disease_info[det['class']].severity }}
+                    </span>
+                </div>
+                <div class="mb-3">
+                    <h6 class="text-success">Treatment / Recommendation</h6>
+                    <p class="text-light-muted">{{ disease_info[det['class']].treatment }}</p>
+                </div>
+                <div>
+                    <h6 class="text-info">Detection Confidence</h6>
+                    <div class="progress" style="height: 25px;">
+                        <div class="progress-bar bg-{{ 'success' if det.confidence > 70 else 'warning' if det.confidence > 40 else 'danger' }}"
+                             style="width: {{ det.confidence }}%">
+                            {{ det.confidence }}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endblock %}
